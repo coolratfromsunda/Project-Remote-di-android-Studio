@@ -1,0 +1,43 @@
+#include <SPI.h>
+#include <Ethernet.h>
+
+byte mac[] = { 0xDE, 0xAD, 0xBE, 0xEF, 0xFE, 0xED };
+IPAddress ip(20,30,40,31);
+char server[] = "20.30.40.39";
+
+#define PIR_PIN 2
+EthernetClient client;
+
+void setup() {
+  Serial.begin(9600);
+  pinMode(PIR_PIN, INPUT);
+  Ethernet.begin(mac, ip);
+  delay(10);
+}
+
+void loop() {
+  int motion = digitalRead(PIR_PIN);
+ if (motion == HIGH) {
+    Sending_To_phpmyadmindatabase(motion);
+  }
+  
+  delay(50);
+}
+
+void Sending_To_phpmyadmindatabase(int pir) {
+  if (client.connect(server, 80)) {
+    Serial.println("connected");
+    String message = "GET /cekk/pir.php?pir=" + String(pir);
+   
+//    client.println("Host: 20.30.40.39");
+//    client.println("Connection: close");
+//     client.print("?message=");
+//     Serial.println("?message=");
+     client.println(message);
+     Serial.println(message);
+    client.println();
+    client.stop();
+  } else {
+    Serial.println("connection failed");
+  }
+}
