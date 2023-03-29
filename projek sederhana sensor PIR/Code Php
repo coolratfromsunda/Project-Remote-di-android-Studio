@@ -1,0 +1,23 @@
+<?php
+class pir {
+  public $link='';
+  function __construct($pir){
+    $this->connect();
+    $this->storeInDB($pir);
+  }
+  
+  function connect(){
+    $this->link = mysqli_connect('localhost','root','') or die('Cannot connect to the DB');
+    mysqli_select_db($this->link,'pirnew') or die('Cannot select the DB');
+  }
+  
+  function storeInDB($pir){
+    $query = "insert into pirr set pir='".$pir."'";
+    $result = mysqli_query($this->link,$query) or die('Errant query:  '.$query);
+  }
+  
+}
+if($_GET['pir'] != ''){
+  $pir = new pir($_GET['pir']);
+}
+?>
