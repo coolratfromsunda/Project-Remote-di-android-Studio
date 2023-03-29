@@ -1,0 +1,51 @@
+#include <SPI.h>
+#include <Ethernet.h>
+
+byte mac[] = { 0xDE, 0xAD, 0xBE, 0xEF, 0xFE, 0xED };
+IPAddress ip(20,30,40,31);
+char server[] = "20.30.40.39";
+EthernetClient client;
+
+#define FLAME_PIN_1 A0
+#define FLAME_PIN_2 A1
+#define FLAME_PIN_3 A2
+#define FLAME_PIN_4 A3
+#define FLAME_PIN_5 A4
+
+void setup() {
+    Serial.begin(9600);
+    pinMode(FLAME_PIN_1, INPUT);
+    pinMode(FLAME_PIN_2, INPUT);
+    pinMode(FLAME_PIN_3, INPUT);
+    pinMode(FLAME_PIN_4, INPUT);
+    pinMode(FLAME_PIN_5, INPUT);
+    Ethernet.begin(mac, ip);
+    delay(10);
+}
+
+void loop() {
+    int channel1 = analogRead(FLAME_PIN_1);
+    int channel2 = analogRead(FLAME_PIN_2);
+    int channel3 = analogRead(FLAME_PIN_3);
+    int channel4 = analogRead(FLAME_PIN_4);
+    int channel5 = analogRead(FLAME_PIN_5);
+
+    if (channel1 > 500 || channel2 > 500 || channel3 > 500 || channel4 > 500 || channel5 > 500) {
+        Sending_To_phpmyadmindatabase("api-terdetek");
+    }
+    delay(500);
+}
+
+void Sending_To_phpmyadmindatabase(String status) {
+    if (client.connect(server, 80)) {
+        Serial.println("connected");
+        String message = "GET /sekarang/input2.php?status=" + status;
+
+        client.println(message);
+        Serial.println(message);
+        client.println();
+        client.stop();
+    } else {
+        Serial.println("connection failed");
+    }
+}
