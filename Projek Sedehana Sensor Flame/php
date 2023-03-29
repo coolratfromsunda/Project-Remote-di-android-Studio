@@ -1,0 +1,31 @@
+<?php
+
+class flame {
+  public $link='';
+  function __construct($status){
+    $this->connect();
+    $this->storeInDB($status);
+  }
+  
+  function connect(){
+    $this->link = mysqli_connect('localhost','root','') or die('Cannot connect to the DB');
+    mysqli_select_db($this->link,'flamenew') or die('Cannot select the DB');
+  }
+  
+  function storeInDB($status){
+    $query = "insert into flame2 (status) values ('".$status."')";
+    $result = mysqli_query($this->link,$query) or die('Errant query:  '.$query);
+  }
+  
+}
+
+if(isset($_GET['status']) && !empty($_GET['status'])){
+  $status = $_GET['status'];
+  if ($status == "0"){
+    $status = "Api Tidak Terdeteksi";
+  } else {
+    $status = "Api Terdeteksi";
+  }
+  $flame = new flame($status);
+}
+
