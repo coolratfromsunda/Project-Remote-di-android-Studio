@@ -29,10 +29,6 @@ void Sending_To_phpmyadmindatabase(int pir) {
     Serial.println("connected");
     String message = "GET /cekk/pir.php?pir=" + String(pir);
    
-//    client.println("Host: 20.30.40.39");
-//    client.println("Connection: close");
-//     client.print("?message=");
-//     Serial.println("?message=");
      client.println(message);
      Serial.println(message);
     client.println();
